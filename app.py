@@ -29,13 +29,16 @@ st.markdown("Menggunakan metode **Support Vector Machine (SVM)** dengan **TF-IDF
 # ── Sidebar ──
 st.sidebar.header("Pengaturan")
 data_source = st.sidebar.radio("Sumber Data", ["Scraping Google Play", "Upload CSV"])
-kamus_file = st.sidebar.file_uploader("Upload kamus kata baku (xlsx)", type=["xlsx"])
 jumlah_review = st.sidebar.number_input("Jumlah review scraping", 100, 10000, 10000, 100)
 run_button = st.sidebar.button("▶ Jalankan Analisis", type="primary", use_container_width=True)
 
 uploaded_file = None
 if data_source == "Upload CSV":
     uploaded_file = st.sidebar.file_uploader("Upload CSV ulasan", type=["csv"])
+
+# Path kamus kata baku lokal
+import os
+KAMUS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "kamuskatabaku.xlsx")
 
 # ── Helper Functions ──
 
@@ -259,13 +262,9 @@ if run_button:
 
     # Normalisasi
     with st.spinner("Normalisasi..."):
-        if kamus_file is not None:
-            kamus_data = pd.read_excel(kamus_file)
-            kamus_tidak_baku = dict(zip(kamus_data['tidak_baku'], kamus_data['kata_baku']))
-            df['normalisasi'] = df['case_folding'].apply(lambda x: replace_taboo_words(x, kamus_tidak_baku))
-        else:
-            st.warning("Kamus kata baku tidak diupload. Tahap normalisasi dilewati.")
-            df['normalisasi'] = df['case_folding']
+        kamus_data = pd.read_excel(KAMUS_PATH)
+        kamus_tidak_baku = dict(zip(kamus_data['tidak_baku'], kamus_data['kata_baku']))
+        df['normalisasi'] = df['case_folding'].apply(lambda x: replace_taboo_words(x, kamus_tidak_baku))
     st.success("Normalisasi selesai!")
 
     # Tokenizing
