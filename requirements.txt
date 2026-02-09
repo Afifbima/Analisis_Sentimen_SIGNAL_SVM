@@ -2,10 +2,10 @@ streamlit
 pandas
 numpy
 scikit-learn
-imbalanced-learn
 Sastrawi
 nltk
 wordcloud
 matplotlib
 seaborn
 openpyxl
+google-play-scraper
